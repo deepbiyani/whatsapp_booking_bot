@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dandiya Raasotsav 2025 - Pass</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- QR Code JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .pass-card {
+      max-width: 700px;
+      margin: auto;
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      padding: 20px;
+    }
+
+    .logo {
+      display: block;
+      margin: auto;
+      max-width: 120px;
+    }
+
+    .event-name {
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin-top: 10px;
+      color: #d81b60;
+    }
+
+    .event-details {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 1rem;
+      color: #333;
+    }
+
+    .customer-details p {
+      margin: 5px 0;
+      font-size: 0.95rem;
+    }
+
+    .qr-container {
+      text-align: center;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+      .pass-card {
+        box-shadow: none;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="pass-card">
+    <img src="https://i.ibb.co/3y8rP2h/logo.png" alt="NavRaang Logo" class="logo">
+    <h2 class="event-name">Dandiya Raasotsav 2025</h2>
+    <p class="event-details">
+      📅 27th October 2025 | 🕠 5:30 PM Onwards<br>
+      📍 Mayfield Ivy Garden & Banquet, Baner, Pune
+    </p>
+
+    <div class="row">
+      <!-- Customer Details Left -->
+      <div style="width: 50%" class="col-md-6 customer-details2 border rounded">
+        <h4>Pass Details</h4>
+        <p><strong>Name:</strong> <span id="custName"></span></p>
+        <p><strong>Email:</strong> <span id="custEmail"></span></p>
+        <p><strong>Phone:</strong> <span id="custPhone"></span></p>
+        <p><strong>Pass Type:</strong> <span id="custPass"></span></p>
+        <p><strong>Quantity:</strong> <span id="custQty"></span></p>
+        <p><strong>Total:</strong> <span id="custTotal"></span></p>
+      </div>
+
+      <!-- QR Code Right -->
+      <div style="width: 50%" class="col-md-5 qr-container2 border rounded">
+        <div id="qrcode">
+              <img src="{{qrData}}" width="100%" alt="qr code"/>
+        </div>
+        <p>Scan for customer details</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Example customer data
+      const customer = {
+        name: "Kajal Sanchela",
+        email: "kajal@example.com",
+        phone: "9876543210",
+        pass: "Couple Pass",
+        qty: 2,
+        total: "₹1798",
+        event: "Dandiya Raasotsav 2025",
+        date: "27th October 2025",
+        venue: "Mayfield Ivy Garden & Banquet, Baner, Pune"
+      };
+
+      // Fill customer details in page
+      document.getElementById("custName").textContent = customer.name;
+      document.getElementById("custEmail").textContent = customer.email;
+      document.getElementById("custPhone").textContent = customer.phone;
+      document.getElementById("custPass").textContent = customer.pass;
+      document.getElementById("custQty").textContent = customer.qty;
+      document.getElementById("custTotal").textContent = customer.total;
+
+      // Generate QR code with customer info
+      new QRCode(document.getElementById("qrcode"), {
+        text: JSON.stringify(customer),
+        width: 180,
+        height: 180,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    });
+  </script>
+
+</body>
+</html>

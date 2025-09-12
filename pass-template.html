@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Event Pass</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f7f7f7; padding: 20px; }
+    .card { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 0 15px rgba(0,0,0,0.2); }
+    .header { background: #4CAF50; color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; }
+    h1 { margin: 0; }
+    .content { padding: 20px; }
+    .content p { font-size: 16px; margin: 10px 0; }
+    .footer { text-align: center; color: gray; margin-top: 20px; font-size: 14px; }
+    .qr { float: right; width: 120px; height: 120px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="header">
+      <h1>🎟️ Event Pass</h1>
+    </div>
+    <div class="content">
+      <p><strong>Event:</strong> {{event}}</p>
+      <p><strong>Amount Paid:</strong> ₹{{amount}}</p>
+      <p><strong>Status:</strong> Confirmed ✅</p>
+      <p><strong>Issued At:</strong> {{issuedAt}}</p>
+      <p><strong>Phone:</strong> {{phone}}</p>
+      <img class="qr" src="https://api.qrserver.com/v1/create-qr-code/?data={{qrData}}&size=120x120" />
+    </div>
+    <div class="footer">
+      Thank you for your booking! Please carry this pass to the event.
+    </div>
+  </div>
+</body>
+</html>
