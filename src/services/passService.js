@@ -52,17 +52,23 @@ async function generatePassFromHtml(booking, outputPath) {
         let html = fs.readFileSync(path.join(__dirname, "../../pass.html"), "utf8");
 
         const qrData = `
-      Event: ${booking.event}
-      Amount: ₹${booking.amount}
+      Name: ${booking.name}
       Phone: ${booking.phone}
+      Units: ${booking.quantity}
+      Amount: ₹${booking.amount}
+      Booking Type: ${booking.type}
+      Booking ID: ${booking._id}
       Issued At: ${new Date().toLocaleString()}
     `;
         const qrDataURL = await generateQR(qrData);
 
         html = html
-            .replace("{{event}}", booking.event)
-            .replace("{{amount}}", booking.amount)
+            .replace("{{name}}", booking.name)
             .replace("{{phone}}", booking.phone)
+            .replace("{{email}}", booking.email)
+            .replace("{{amount}}", booking.amount)
+            .replace("{{quantity}}", booking.quantity)
+            .replace("{{bookingId}}", booking._id)
             .replace("{{issuedAt}}", new Date().toLocaleString())
             .replace("{{qrData}}", qrDataURL);
 
