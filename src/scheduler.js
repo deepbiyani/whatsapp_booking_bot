@@ -24,7 +24,7 @@ function startScheduler(client) {
                 logger.info(`✅ Pass sent to ${booking.phone}`);
             }
         } catch (err) {
-            logger.error("❌ Scheduler error: " + err.message);
+            logger.error("❌ Scheduler error: " + err);
         }
     }, 300 * 1000);
 }
