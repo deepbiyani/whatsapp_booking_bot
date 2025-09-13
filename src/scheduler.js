@@ -15,18 +15,23 @@ function startScheduler(client) {
                 if (!fs.existsSync("passes")) fs.mkdirSync("passes");
 
                 await generatePassFromHtml(booking, outputPath);
-                const media = MessageMedia.fromFilePath(outputPath);
 
-                await client.sendMessage(booking.phone, media, { sendMediaAsDocument: true });
-                booking.passSent = true;
-                booking.passFile = outputPath;
-                await booking.save();
-                logger.info(`✅ Pass sent to ${booking.phone}`);
+                try {
+                    const media = MessageMedia.fromFilePath(outputPath);
+
+                    await client.sendMessage(booking.phone, media, { sendMediaAsDocument: true });
+                    booking.passSent = true;
+                    booking.passFile = outputPath;
+                    await booking.save();
+                    logger.info(`✅ Pass sent to ${booking.phone}`);
+                } catch (err) {
+                    logger.error("❌ Failed to send pass: " + err);
+                }
             }
         } catch (err) {
             logger.error("❌ Scheduler error: " + err);
         }
-    }, 300 * 1000);
+    }, 30 * 1000);
 }
 
 module.exports = { startScheduler };

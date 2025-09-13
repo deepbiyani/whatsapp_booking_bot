@@ -12,6 +12,9 @@
   "type": "commonjs",
   "dependencies": {
     "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "google-auth-library": "^10.3.0",
+    "google-spreadsheet": "^5.0.2",
     "mongoose": "^8.18.1",
     "pdfkit": "^0.17.2",
     "qrcode": "^1.5.4",

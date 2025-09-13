@@ -91,8 +91,8 @@
             color:var(--accent);
         }
         .qr {
-            width:160px;
-            height:160px;
+            width:140px;
+            height:140px;
             border-radius:8px;
             background:#fff;
             display:inline-flex;
@@ -124,7 +124,7 @@
         /* Actions row */
         .actions{
             display:flex;
-            gap:8px;
+            gap:5px;
             padding:12px 14px;
             border-top:1px solid #f3f4f6;
         }
@@ -168,23 +168,17 @@
 </head>
 <body>
 
-<div class="ticket-wrap">
+<div class="ticket-wrap" >
     <div class="ticket" id="ticketCard">
         <div class="top">
             <div class="poster">
                 <img id="posterImg"  src="https://i.ibb.co/3y8rP2h/logo.png" alt="NavRaang Logo" class="logo">
-
-<!--                <img id="posterImg" src="poster.jpg" alt="poster">-->
             </div>
             <div class="movie-info">
                 <h3 class="movie-title" id="movieTitle">Dandiya Raasotsav 2025</h3>
-<!--                <p>📅 27th September 2025 | 🕠 5:30 PM Onwards<br>-->
-<!--                📍 Mayfield Ivy Garden & Banquet, Baner, Pune</-->
                 <p class="meta" id="movieMeta">📅 27th September 2025 | 🕠 5:30 PM Onwards<br>📍 Mayfield Ivy Garden & Banquet, Baner, Pune</p>
             </div>
         </div>
-
-        <div class="tap-hint">Tap to hide details</div>
 
         <div class="qr-section">
             <div class="tickets-count" id="ticketsCount">{{quantity}} Ticket(s)</div>
@@ -197,9 +191,8 @@
             <div class="booking-id" id="bookingId">BOOKING ID: {{bookingId}}</div>
         </div>
 
-
         <div class="notice" id="noticeText">
-            Cancellation available : cut-off time of 4 hrs before showtime
+            <b>Refund Policy  </b>: Tickets are non refundable
         </div>
 
         <div class="actions">
@@ -218,10 +211,10 @@
         </div>
 
         <div class="price">
-            <div class="price-row"><div>Ticket price (2)</div><div id="priceTickets">Rs.360.00</div></div>
-            <div class="price-row"><div>Convenience Fee</div><div id="priceConvenience">Rs.68.44</div></div>
-            <div class="price-row"><div>Discount</div><div id="priceDiscount">- Rs.0.00</div></div>
-            <div class="total"><div>Total Amount</div><div id="priceTotal">Rs.430.44</div></div>
+            <div class="price-row"><div>Ticket price ({{quantity}})</div><div id="priceTickets">Rs.{{amount}}</div></div>
+<!--            <div class="price-row"><div>Convenience Fee</div><div id="priceConvenience">Rs.00</div></div>-->
+<!--            <div class="price-row"><div>Discount</div><div id="priceDiscount">- Rs.0.00</div></div>-->
+            <div class="total"><div>Total Amount</div><div id="priceTotal">Rs.{{amount}}</div></div>
         </div>
 
         <div class="close-x" onclick="window.close && window.close();">✕</div>
@@ -246,23 +239,23 @@
     };
 
     // Apply to DOM
-    document.getElementById('posterImg').src = booking.poster;
-    document.getElementById('qrImg').src = booking.qr;
-    document.getElementById('movieTitle').textContent = booking.title;
-    document.getElementById('movieMeta').innerHTML = booking.meta.replace(/\n/g,'<br>');
-    document.getElementById('holderName').textContent = booking.holder;
-    document.getElementById('ticketsCount').textContent = booking.tickets;
-    document.getElementById('bookingId').textContent = 'BOOKING ID: ' + booking.bookingId;
-    document.getElementById('noticeText').textContent = booking.notice;
-    document.getElementById('priceTickets').textContent = booking.priceTickets;
-    document.getElementById('priceConvenience').textContent = booking.priceConvenience;
-    document.getElementById('priceDiscount').textContent = booking.priceDiscount;
-    document.getElementById('priceTotal').textContent = booking.priceTotal;
-
-    // Example action handlers (hook into your app)
-    document.getElementById('sendTickets').addEventListener('click', ()=> alert('Send to friends clicked'));
-    document.getElementById('cancelBooking').addEventListener('click', ()=> alert('Cancel booking clicked'));
-    document.getElementById('contactSupport').addEventListener('click', ()=> alert('Contact support clicked'));
+    // document.getElementById('posterImg').src = booking.poster;
+    // document.getElementById('qrImg').src = booking.qr;
+    // document.getElementById('movieTitle').textContent = booking.title;
+    // document.getElementById('movieMeta').innerHTML = booking.meta.replace(/\n/g,'<br>');
+    // document.getElementById('holderName').textContent = booking.holder;
+    // document.getElementById('ticketsCount').textContent = booking.tickets;
+    // document.getElementById('bookingId').textContent = 'BOOKING ID: ' + booking.bookingId;
+    // document.getElementById('noticeText').textContent = booking.notice;
+    // document.getElementById('priceTickets').textContent = booking.priceTickets;
+    // document.getElementById('priceConvenience').textContent = booking.priceConvenience;
+    // document.getElementById('priceDiscount').textContent = booking.priceDiscount;
+    // document.getElementById('priceTotal').textContent = booking.priceTotal;
+    //
+    // // Example action handlers (hook into your app)
+    // document.getElementById('sendTickets').addEventListener('click', ()=> alert('Send to friends clicked'));
+    // document.getElementById('cancelBooking').addEventListener('click', ()=> alert('Cancel booking clicked'));
+    // document.getElementById('contactSupport').addEventListener('click', ()=> alert('Contact support clicked'));
 </script>
 </body>
 </html>

@@ -49,28 +49,30 @@ async function generatePassPDF(booking, outputPath) {
 
 async function generatePassFromHtml(booking, outputPath) {
     try {
-        let html = fs.readFileSync(path.join(__dirname, "../../pass.html"), "utf8");
+        let html = fs.readFileSync(path.join(__dirname, "../../sample-pass.html"), "utf8");
 
-        const qrData = `
-      Name: ${booking.name}
-      Phone: ${booking.phone}
-      Units: ${booking.quantity}
-      Amount: ₹${booking.amount}
-      Booking Type: ${booking.type}
-      Booking ID: ${booking._id}
-      Issued At: ${new Date().toLocaleString()}
-    `;
+    //     const qrData = `
+    //   Name: ${booking.name}
+    //   Phone: ${booking.phone}
+    //   Units: ${booking.quantity}
+    //   Amount: ₹${booking.amount}
+    //   Booking Type: ${booking.type}
+    //   Booking ID: ${booking._id}
+    //   Issued At: ${new Date().toLocaleString()}
+    // `;
+        const qrData = `${booking._id}`;
         const qrDataURL = await generateQR(qrData);
+        // const qrDataURL = await generateQR(booking._id);
 
         html = html
-            .replace("{{name}}", booking.name)
-            .replace("{{phone}}", booking.phone)
-            .replace("{{email}}", booking.email)
-            .replace("{{amount}}", booking.amount)
-            .replace("{{quantity}}", booking.quantity)
-            .replace("{{bookingId}}", booking._id)
-            .replace("{{issuedAt}}", new Date().toLocaleString())
-            .replace("{{qrData}}", qrDataURL);
+            .replaceAll("{{name}}", booking.name)
+            .replaceAll("{{phone}}", booking.phone)
+            .replaceAll("{{email}}", booking.email)
+            .replaceAll("{{amount}}", booking.amount)
+            .replaceAll("{{quantity}}", booking.quantity)
+            .replaceAll("{{bookingId}}", booking._id)
+            .replaceAll("{{issuedAt}}", new Date().toLocaleString())
+            .replaceAll("{{qrData}}", qrDataURL);
 
         const browser = await puppeteer.launch({ headless: true });
         const page = await browser.newPage();
