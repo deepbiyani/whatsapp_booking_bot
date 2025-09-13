@@ -1,24 +1,90 @@
 const { Client, LocalAuth, MessageMedia } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
-const fs = require("fs");
 const path = require("path");
-const { createBooking, markAsPaid, getLatestBooking } = require("./bookingService");
+const { createBooking } = require("./bookingService");
 const { generatePassFromHtml } = require("./passService");
 const logger = require("../utils/logger");
 const Booking = require("../models/Booking");
+const PassType = require("../models/PassType");
 
 function setupWhatsAppBot() {
     const client = new Client({ authStrategy: new LocalAuth({ clientId: "devineEvent", dataPath: "./sessions"  }) });
-    // const client = new Client({
-    //     authStrategy: new LocalAuth({
-    //         clientId: "devineEvent",
-    //         dataPath: __dirname + "./sessions"
-    //     }),
-    //     puppeteer: {
-    //         headless: true,
-    //         args: ["--no-sandbox", "--disable-setuid-sandbox"]
-    //     }
+
+    client.on("loading_screen", (percent, message) => {
+        console.log("LOADING SCREEN", percent, message);
+    });
+
+    client.on("message_create", (message) => {
+        // Fired when you send or receive a message
+        console.log("MESSAGE CREATED:", message.body);
+    });
+
+    // client.on("message_revoke_everyone", (message, revokedMsg) => {
+    //     console.log("MESSAGE REVOKED EVERYONE:", message, revokedMsg);
     // });
+
+    // client.on("message_revoke_me", (message) => {
+    //     console.log("MESSAGE REVOKED ME:", message);
+    // });
+
+    // client.on("message_ack", (message, ack) => {
+    //     // ack: -1 = failed, 0 = pending, 1 = sent, 2 = received, 3 = read, 4 = played
+    //     console.log("MESSAGE ACK:", message.body, ack);
+    // });
+
+    client.on("media_uploaded", (message) => {
+        console.log("MEDIA UPLOADED:", message.body);
+    });
+
+    // client.on("group_join", (notification) => {
+    //     console.log("GROUP JOIN:", notification);
+    // });
+    //
+    // client.on("group_leave", (notification) => {
+    //     console.log("GROUP LEAVE:", notification);
+    // });
+    //
+    // client.on("group_update", (notification) => {
+    //     console.log("GROUP UPDATE:", notification);
+    // });
+    //
+    // client.on("change_state", (state) => {
+    //     console.log("CHANGE STATE:", state);
+    // });
+
+    client.on("change_battery", (batteryInfo) => {
+        console.log("BATTERY INFO:", batteryInfo); // { battery: % , plugged: boolean }
+    });
+
+    client.on("presence_update", (update) => {
+        console.log("PRESENCE UPDATE:", update);
+    });
+
+    client.on("call", (call) => {
+        console.log("CALL RECEIVED:", call);
+        // Example: auto reject
+        // call.reject();
+    });
+
+    /**
+     * 🔹 Contact & chat updates
+     */
+    // client.on("contact_changed", (message, oldId, newId, isContact) => {
+    //     console.log("CONTACT CHANGED:", { message, oldId, newId, isContact });
+    // });
+
+    client.on("chat_removed", (chat) => {
+        console.log("CHAT REMOVED:", chat);
+    });
+
+    client.on("chat_archived", (chat, currState, prevState) => {
+        console.log("CHAT ARCHIVED:", chat, currState, prevState);
+    });
+
+    client.on("chat_unread", (chat) => {
+        console.log("CHAT UNREAD:", chat);
+    });
+
     client.on("qr", (qr) => {
         qrcode.generate(qr, { small: true });
         logger.info("📲 Scan QR code with WhatsApp");
@@ -50,8 +116,6 @@ function setupWhatsAppBot() {
 
                 const match1 = text.split('NAME:');
                 const nameMatch = match1[1].trim().split("EMAIL:")[0].trim();
-                // const nameMatch = match ? match[1].trim() : null;
-                // const nameMatch = text.match(/NAME:\s*([^\s]+)/);
                 const emailMatch = text.match(/EMAIL:\s*([^\s]+)/);
                 const phoneMatch = text.match(/PHONE:\s*(\d{10})/);
                 const passMatch = text.match(/PASS:\s*(.*?)\s+/);
@@ -68,10 +132,13 @@ function setupWhatsAppBot() {
                     whatsapp: msg.from
                 };
 
-                // if (parts.length < 3) {
-                //     msg.reply("❌ Format: BOOK <EVENT_NAME> <TYPE>");
-                //     return;
-                // }
+                const passType = await PassType.findOne({ name: data.type.toUpperCase(), isActive: true }).sort({ createdAt: -1 });
+
+                if (!passType) {
+                    await msg.reply("✅ Invalid booking type");
+                }
+
+                data.total = passType.price * data.quantity;
 
                 const booking = await createBooking(data);
                 console.log(booking)

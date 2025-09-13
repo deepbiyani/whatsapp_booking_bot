@@ -51,6 +51,7 @@ Thumbs.db
 
 #Bot
 #.gitignore
+.env
 .wwebjs_auth/
 .wwebjs_cache/
 mongodb-compass_1.46.10_amd64.deb

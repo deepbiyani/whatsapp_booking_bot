@@ -8,6 +8,7 @@ const bookingSchema = new mongoose.Schema({
     whatsapp: String,
     quantity: Number,
     amount: Number,
+    total: Number,
     paid: { type: Boolean, default: false },
     passSent: { type: Boolean, default: false },
     passFile: { type: String, default: null },

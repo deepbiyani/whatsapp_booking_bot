@@ -32,7 +32,7 @@ function startScheduler(client) {
         } catch (err) {
             logger.error("❌ Scheduler error: " + err);
         }
-    }, 15 * 1000);
+    }, 300 * 1000);
 }
 
 module.exports = { startScheduler };
