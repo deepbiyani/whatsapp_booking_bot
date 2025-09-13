@@ -62,6 +62,8 @@ async function generatePassFromHtml(booking, outputPath) {
     // `;
         const qrData = `${booking._id}`;
         const qrDataURL = await generateQR(qrData);
+        const logoDataUrl = imageToDataURL("./assets/images/logo.jpeg");
+
         // const qrDataURL = await generateQR(booking._id);
 
         html = html
@@ -72,6 +74,7 @@ async function generatePassFromHtml(booking, outputPath) {
             .replaceAll("{{quantity}}", booking.quantity)
             .replaceAll("{{bookingId}}", booking._id)
             .replaceAll("{{issuedAt}}", new Date().toLocaleString())
+            .replaceAll("{{logoData}}", logoDataUrl)
             .replaceAll("{{qrData}}", qrDataURL);
 
         const browser = await puppeteer.launch({ headless: true });
@@ -92,5 +95,21 @@ async function generatePassFromHtml(booking, outputPath) {
         throw err;
     }
 }
+
+
+function imageToDataURL(imagePath) {
+  // Read the file
+  const fileBuffer = fs.readFileSync(imagePath);
+
+  // Get the file extension
+  const ext = path.extname(imagePath).slice(1);
+
+  // Convert to Base64
+  const base64 = fileBuffer.toString("base64");
+
+  // Create the Data URL
+  return `data:image/${ext};base64,${base64}`;
+}
+
 
 module.exports = { generatePassPDF, generatePassFromHtml };

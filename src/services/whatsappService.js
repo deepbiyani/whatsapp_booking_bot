@@ -46,7 +46,11 @@ function setupWhatsAppBot() {
             logger.info("New Message: " + text);
 
             if (text.startsWith("NAME")) {
-                const nameMatch = text.match(/NAME:\s*([^\s]+)/);
+
+                const match1 = text.split('NAME:');
+                const nameMatch = match1[1].trim().split("EMAIL:")[0].trim();
+                // const nameMatch = match ? match[1].trim() : null;
+                // const nameMatch = text.match(/NAME:\s*([^\s]+)/);
                 const emailMatch = text.match(/EMAIL:\s*([^\s]+)/);
                 const phoneMatch = text.match(/PHONE:\s*(\d{10})/);
                 const passMatch = text.match(/PASS:\s*(.*?)\s+/);
@@ -54,7 +58,7 @@ function setupWhatsAppBot() {
                 const totalMatch = text.match(/TOTAL:\s*₹+(\d+)/);
 
                 const data = {
-                    name: nameMatch ? nameMatch[1] : null,
+                    name: nameMatch ? nameMatch : match1[0],
                     email: emailMatch ? emailMatch[1] : null,
                     phone: phoneMatch ? phoneMatch[1] : null,
                     type: passMatch ? passMatch[1].trim() : null,
@@ -69,10 +73,10 @@ function setupWhatsAppBot() {
                 // }
 
                 const booking = await createBooking(data);
-                console.log(booking._id)
+                console.log(booking)
                 const upiLink = `upi://pay?pa=${process.env.UPI_ID}&pn=${encodeURIComponent("Event Organizer")}&am=${booking.amount}&cu=INR&tn=${booking.event}`;
 
-                await msg.reply(`✅ Booking for *${booking.name}*\n💰 Amount: ₹${booking.amount}\nPay here:\n${upiLink}\nReply with *PAID* after payment.`);
+                await msg.reply(`✅ Booking received for *${booking.name}*\n💰 Amount tp be paid: ₹${booking.amount}\nPay here:\n${upiLink}\nReply with *PAID* after payment.`);
             }
 
             else if (text === "PAID") {

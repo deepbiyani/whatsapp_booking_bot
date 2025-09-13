@@ -18,8 +18,9 @@ function startScheduler(client) {
 
                 try {
                     const media = MessageMedia.fromFilePath(outputPath);
+                    console.log(booking.whatsapp)
 
-                    await client.sendMessage(booking.phone, media, { sendMediaAsDocument: true });
+                    await client.sendMessage(booking.whatsapp, media, { sendMediaAsDocument: true });
                     booking.passSent = true;
                     booking.passFile = outputPath;
                     await booking.save();
@@ -31,7 +32,7 @@ function startScheduler(client) {
         } catch (err) {
             logger.error("❌ Scheduler error: " + err);
         }
-    }, 30 * 1000);
+    }, 15 * 1000);
 }
 
 module.exports = { startScheduler };
