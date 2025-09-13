@@ -1,8 +1,8 @@
 const Booking = require("../models/Booking");
 
-async function createBooking(phone, event, type) {
+async function createBooking(data) {
     let amount;
-    switch (type.toUpperCase()) {
+    switch (data.type.toUpperCase()) {
         case "SINGLE":
             amount = 400; break;
         case "COUPLE":
@@ -13,7 +13,7 @@ async function createBooking(phone, event, type) {
             throw new Error("Invalid booking type");
     }
 
-    const booking = new Booking({ phone, event, type, amount });
+    const booking = new Booking(data);
     await booking.save();
     return booking;
 }
