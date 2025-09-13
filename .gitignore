@@ -42,7 +42,6 @@ Thumbs.db
 /storage/framework/cache/*
 /storage/framework/sessions/*
 /storage/framework/views/*
-.env
 
 # React
 /node_modules
@@ -51,7 +50,6 @@ Thumbs.db
 
 #Bot
 #.gitignore
-.env
 .wwebjs_auth/
 .wwebjs_cache/
 mongodb-compass_1.46.10_amd64.deb
