@@ -11,6 +11,8 @@ const bookingSchema = new mongoose.Schema({
     paid: { type: Boolean, default: false },
     passSent: { type: Boolean, default: false },
     passFile: { type: String, default: null },
+    entryTime: { type: Date, default: null },
+    entryStatus: { type: String, default: "Pending" },
     createdAt: { type: Date, default: Date.now }
 });
 

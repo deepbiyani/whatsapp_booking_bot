@@ -26,5 +26,38 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+router.get("/register-entry/:id", async (req, res) => {
+    try {
+        // Find the booking by ID
+        const booking = await Booking.findById(req.params.id);
+
+        if (!booking) {
+            return res.status(404).json({
+                success: false,
+                message: "Booking not found"
+            });
+        }
+
+        // Update entry details
+        booking.entryTime = new Date(); // Current timestamp
+        booking.entryStatus = "Entered"; // Mark as entered
+
+        await booking.save();
+
+        res.json({
+            success: true,
+            message: "Entry registered successfully",
+            data: booking
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Error registering entry",
+            error: error.message
+        });
+    }
+});
+
+
 module.exports = router;
 

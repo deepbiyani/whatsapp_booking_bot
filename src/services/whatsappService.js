@@ -5,6 +5,7 @@ const path = require("path");
 const { createBooking, markAsPaid, getLatestBooking } = require("./bookingService");
 const { generatePassFromHtml } = require("./passService");
 const logger = require("../utils/logger");
+const Booking = require("../models/Booking");
 
 function setupWhatsAppBot() {
     const client = new Client({ authStrategy: new LocalAuth({ clientId: "devineEvent", dataPath: "./sessions"  }) });
@@ -80,22 +81,34 @@ function setupWhatsAppBot() {
             }
 
             else if (text === "PAID") {
-                const booking = await markAsPaid(msg.from);
+
+                const phone = msg.from;
+                const booking = await Booking.findOne({ phone }).sort({ createdAt: -1 });
+
                 if (!booking) {
-                    msg.reply("❌ No unpaid booking found.");
-                    return;
+                    msg.reply("❌ Booking not found for this number");
                 }
 
-                msg.reply("✅ Payment confirmed! Generating your pass...");
+                if (booking.paid) {
+                    if (booking.passSent) {
+                        msg.reply("❌ No unpaid booking found. Pass Already sent");
+                        const media = MessageMedia.fromFilePath(booking.passFile);
+                        await client.sendMessage(phone, media, { sendMediaAsDocument: true });
+                    } else {
+                        msg.reply("✅ Payment confirmed! Generating your pass...");
 
-                const outputPath = path.join("passes", `pass_${booking._id}.pdf`);
-                await generatePassFromHtml(booking, outputPath);
+                        const outputPath = path.join("passes", `pass_${booking._id}.pdf`);
+                        await generatePassFromHtml(booking, outputPath);
 
-                const media = MessageMedia.fromFilePath(outputPath);
-                await client.sendMessage(msg.from, media, { sendMediaAsDocument: true });
-                booking.passSent = true;
-                booking.passFile = outputPath;
-                await booking.save();
+                        const media = MessageMedia.fromFilePath(outputPath);
+                        await client.sendMessage(msg.from, media, { sendMediaAsDocument: true });
+                        booking.passSent = true;
+                        booking.passFile = outputPath;
+                        await booking.save();
+                    }
+                } else {
+                    msg.reply("❌ Payment is still not updated");
+                }
             }
 
             else if (text === "HELLO") {
