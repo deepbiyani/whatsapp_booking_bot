@@ -1,17 +1,23 @@
 const Booking = require("../models/Booking");
 
 async function createBooking(data) {
-    // let amount;
-    // switch (data.type.toUpperCase()) {
-    //     case "SINGLE":
-    //         amount = 400; break;
-    //     case "COUPLE":
-    //         amount = 700; break;
-    //     case "GROUP":
-    //         amount = 1300; break;
-    //     default:
-    //         throw new Error("Invalid booking type");
-    // }
+    let amount;
+    switch (data.type.toUpperCase()) {
+        case "Kids Entry":
+            amount = 399; break;
+        case "Regular Ticket":
+            amount = 499; break;
+        case "Couple Pass":
+            amount = 899; break;
+        case "Group of 3 Pass":
+            amount = 1399; break;
+            case "Group of 5 Pass":
+            amount = 2199; break;
+        default:
+            throw new Error("Invalid booking type");
+    }
+
+    amount = amount * quantity;
 
     const booking = new Booking(data);
     await booking.save();
