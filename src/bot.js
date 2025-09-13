@@ -5,6 +5,7 @@ const { startScheduler } = require("./scheduler");
 
 const express = require("express");
 const bookingRoutes = require("./routes/bookingRoutes");
+const passRoutes = require("./routes/PassTypeRoutes");
 
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(express.json());
     startScheduler(client);
 
     app.use("/api/bookings", bookingRoutes);
+    app.use("/api/passes", passRoutes);
 
     // Start server
     const PORT = process.env.PORT || 5000;
