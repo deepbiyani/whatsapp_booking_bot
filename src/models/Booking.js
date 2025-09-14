@@ -4,7 +4,7 @@ const bookingSchema = new mongoose.Schema({
     name: String,
     email: String,
     phone: String,
-    type: { type: String, enum: ["SINGLE", "COUPLE", "GROUP", "REGULAR"] },
+    type: { type: String }, //, enum: ["SINGLE", "COUPLE", "GROUP", "REGULAR"]
     whatsapp: String,
     quantity: Number,
     amount: Number,

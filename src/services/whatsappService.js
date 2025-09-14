@@ -112,7 +112,7 @@ function setupWhatsAppBot() {
 
             logger.info("New Message: " + text);
 
-            if (text.startsWith("NAME")) {
+            if (text.startsWith("TICKET BOOKING REQUEST")) {
 
                 const match1 = text.split('NAME:');
                 const nameMatch = match1[1].trim().split("EMAIL:")[0].trim();
@@ -138,19 +138,20 @@ function setupWhatsAppBot() {
                     await msg.reply("✅ Invalid booking type");
                 }
 
+                data.amount = passType.price;
                 data.total = passType.price * data.quantity;
 
                 const booking = await createBooking(data);
                 console.log(booking)
                 const upiLink = `upi://pay?pa=${process.env.UPI_ID}&pn=${encodeURIComponent("Event Organizer")}&am=${booking.amount}&cu=INR&tn=${booking.event}`;
 
-                await msg.reply(`✅ Booking received for *${booking.name}*\n💰 Amount tp be paid: ₹${booking.amount}\nPay here:\n${upiLink}\nReply with *PAID* after payment.`);
+                await msg.reply(`✅ Booking received for *${booking.name}*\n💰 Amount to be paid: ₹${booking.amount}\nPay here:\n${upiLink}\n Reply with *PAID* after payment. \n Hold on till we verify your payment. \n Thank You `);
             }
 
             else if (text === "PAID") {
 
                 const phone = msg.from;
-                const booking = await Booking.findOne({ phone }).sort({ createdAt: -1 });
+                const booking = await Booking.findOne({ 'whatsapp': phone }).sort({ createdAt: -1 });
 
                 if (!booking) {
                     msg.reply("❌ Booking not found for this number");
@@ -182,6 +183,7 @@ function setupWhatsAppBot() {
                 msg.reply("👋 Hi! Use:\nBOOK <EVENT_NAME> <TYPE>\nTypes: SINGLE / COUPLE / GROUP");
             }
         } catch (err) {
+            await msg.reply("✅ Invalid message format");
             logger.error("❌ Error handling message: " + err);
         }
     });
