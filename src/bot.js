@@ -31,5 +31,5 @@ app.use(cors());
 
 })();
 
-app.use("/api/bookings", bookingRoutes);
+// app.use("/api/bookings", bookingRoutes);
 
