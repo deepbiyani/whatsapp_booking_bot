@@ -16,8 +16,10 @@ app.use(cors());
 
 (async () => {
     await connectDB();
-    const client = setupWhatsAppBot();
-    startScheduler(client);
+    if (process.env.WHATSAPP_LISTNER == "YES") {
+        const client = setupWhatsAppBot();
+        startScheduler(client);
+    }
 
     app.use("/api/bookings", bookingRoutes);
     app.use("/api/passes", passRoutes);
