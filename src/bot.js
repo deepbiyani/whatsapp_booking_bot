@@ -2,15 +2,17 @@ require("dotenv").config();
 const connectDB = require("./config/db");
 const { setupWhatsAppBot } = require("./services/whatsappService");
 const { startScheduler } = require("./scheduler");
+const cors = require("cors");
 
 const express = require("express");
 const bookingRoutes = require("./routes/bookingRoutes");
 const passRoutes = require("./routes/PassTypeRoutes");
 const wsappRoutes = require("./routes/whatsappRoutes");
 
-
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 (async () => {
     await connectDB();

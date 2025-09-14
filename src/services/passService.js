@@ -83,8 +83,10 @@ async function generatePassFromHtml(booking, outputPath) {
 
         await page.pdf({
             path: outputPath,
-            format: "A4",
+            width: "400px",
+            height: "750px",
             printBackground: true,
+            margin: { top: 0, right: 0, bottom: 0, left: 0 }
         });
 
         await browser.close();
@@ -98,6 +100,7 @@ async function generatePassFromHtml(booking, outputPath) {
 
 
 function imageToDataURL(imagePath) {
+    console.log(imagePath);
   // Read the file
   const fileBuffer = fs.readFileSync(imagePath);
 

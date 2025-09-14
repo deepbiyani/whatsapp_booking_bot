@@ -8,7 +8,7 @@ const Booking = require("../models/Booking");
 const PassType = require("../models/PassType");
 
 function setupWhatsAppBot() {
-    const client = new Client({ authStrategy: new LocalAuth({ clientId: "devineEvent", dataPath: "./sessions"  }) });
+    const client = new Client({ authStrategy: new LocalAuth({ clientId: "devineEvent"  }) });
 
     client.on("loading_screen", (percent, message) => {
         console.log("LOADING SCREEN", percent, message);
@@ -143,7 +143,7 @@ function setupWhatsAppBot() {
 
                 const booking = await createBooking(data);
                 console.log(booking)
-                const upiLink = `upi://pay?pa=${process.env.UPI_ID}&pn=${encodeURIComponent("Event Organizer")}&am=${booking.amount}&cu=INR&tn=${booking.event}`;
+                const upiLink = `upi://pay?pa=${process.env.UPI_ID}&pn=${encodeURIComponent("Event Organizer")}&am=${booking.amount}&cu=INR&tn=EventPass`;
 
                 await msg.reply(`✅ Booking received for *${booking.name}*\n💰 Amount to be paid: ₹${booking.amount}\nPay here:\n${upiLink}\n Reply with *PAID* after payment. \n Hold on till we verify your payment. \n Thank You `);
             }
