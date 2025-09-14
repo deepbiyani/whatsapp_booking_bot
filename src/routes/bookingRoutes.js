@@ -10,7 +10,7 @@ router.get("/", async (req, res) => {
     console.log("GET /api/bookings hit");   // 👈 add this
     try {
         const bookings = await Booking.find().sort({ createdAt: -1 });
-        console.log(bookings);   // 👈 add this
+        // console.log(bookings);   // 👈 add this
         res.json({ success: true, data: bookings });
     } catch (error) {
         console.error("Error fetching bookings:", error);
