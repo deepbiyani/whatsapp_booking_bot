@@ -124,7 +124,13 @@ router.get("/pass/:id", async (req, res) => {
 
         await generatePassFromHtml(booking, filePath);
 
-        res.download(filePath, `${booking._id}_pass.pdf`);
+        // res.download(filePath, `${booking._id}_pass.pdf`);
+        res.sendFile(filePath, {
+            headers: {
+                'Content-Type': 'application/pdf',
+                'Content-Disposition': `attachment; filename="${booking._id}_pass.pdf"`
+            }
+        });
 
     } catch (error) {
         console.error("Error generating pass:", error);

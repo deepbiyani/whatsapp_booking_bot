@@ -17,9 +17,9 @@
             font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
         }
         /*html,body{height:100%;margin:0;background:linear-gradient(180deg,#eef2f7 0%, #f8fafc 100%); display:flex; align-items:center; justify-content:center; padding:24px;}*/
-          html,body{margin:0; display:flex; align-items:center; justify-content:center; padding:24px;}
+          html,body{margin:0; display:flex; align-items:center; justify-content:center; padding:5px;}
         .ticket-wrap{
-            width:360px;
+            width:400px;
             max-width:95%;
         }
 
@@ -36,11 +36,11 @@
         .top {
             display:flex;
             gap:14px;
-            padding:16px;
+            padding:12px;
             align-items:flex-start;
         }
         .poster {
-            width:25%;
+            width:35%;
             height:96px;
             border-radius:8px;
             overflow:hidden;
@@ -60,7 +60,7 @@
             margin:0 0 6px 0;
         }
         .meta{
-            font-size:12px;
+            font-size:11px;
             color:var(--muted);
             line-height:1.35;
             margin:0;
@@ -77,7 +77,7 @@
 
         /* QR section */
         .qr-section{
-            padding:18px 18px 8px;
+            padding:10px 10px 8px;
             text-align:center;
         }
         .tickets-count{
@@ -88,12 +88,12 @@
         .holder-name{
             font-weight:600;
             font-size:16px;
-            margin-bottom:12px;
+            margin-bottom:8px;
             color:var(--accent);
         }
         .qr {
-            width:140px;
-            height:140px;
+            width:130px;
+            height:130px;
             border-radius:8px;
             background:#fff;
             display:inline-flex;
@@ -115,9 +115,9 @@
         .notice{
             background:#fff7ed;
             color:#92400e;
-            font-size:12px;
-            padding:10px 14px;
-            margin:12px 18px;
+            font-size:8px;
+            padding:5px 5px;
+            margin:10px 16px;
             border-radius:8px;
             border:1px solid #ffedd5;
         }
@@ -150,20 +150,31 @@
         }
         .price-row{display:flex;justify-content:space-between;margin:6px 0}
         .total{
-            display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px dashed #eef2f6;margin-top:8px;font-weight:700;color:var(--accent)
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding-top:5px;
+            border-top:1px dashed #454749;
+            margin-top:8px;
+            font-weight:700;color:var(--accent)
         }
 
         /* small footer close */
-        .close-x{
-            position:absolute;right:10px;top:10px;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid #f1f5f9;cursor:pointer;
-            box-shadow:0 4px 12px rgba(2,6,23,0.04);
-        }
+        /*.close-x{*/
+        /*    position:absolute;right:10px;top:10px;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid #f1f5f9;cursor:pointer;*/
+        /*    box-shadow:0 4px 12px rgba(2,6,23,0.04);*/
+        /*}*/
 
         /* Print adjustments */
         @media print{
             body{background:white}
             .ticket{box-shadow:none;border-radius:6px}
             .qr{width:200px;height:200px}
+        }
+        hr.dotted {
+            border: none;
+            border-top: 1px dotted #454242;
+            margin: 5px 0;
         }
     </style>
 </head>
@@ -174,10 +185,17 @@
         <div class="top">
             <div class="poster">
                 <img id="posterImg" src="{{logoData}}" https://i.ibb.co/3y8rP2h/logo.png" alt="NavRaang Logo" class="logo">
+<!--                <img src="https://assets-in.bmscdn.com/nmcms/events/banner/desktop/media-desktop-dandiya-rasotsav-2025-0-2025-9-12-t-21-7-5.jpg" alt="media-desktop-dandiya-rasotsav-2025-0-2025-9-12-t-21-7-5.jpg" class="sc-1yixhh3-3 bjLdJI">-->
             </div>
-            <div class="movie-info">
+            <div class="movie-info" href="">
                 <h3 class="movie-title" id="movieTitle">Dandiya Raasotsav 2025</h3>
-                <p class="meta" id="movieMeta">📅 27th September 2025 | 🕠 5:30 PM Onwards<br>📍 Mayfield Ivy Garden & Banquet, Baner, Pune</p>
+                <p class="meta" id="movieMeta">
+                    📅 27th September 2025 | <br>
+                    🕠 5:30 PM Onwards<br>
+                    📍 Mayfield Ivy Garden & Banquet, <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Baner, Pune
+<!--                    <a style="font-size: 9px; float: right; margin-right: 15px" class="direction-link" target="_blank" href="https://www.google.com/maps/place/Mayfield+Ivy+Garden+%26+Banquet/@18.5638979,73.7856304,701m/data=!3m2!1e3!4b1!4m6!3m5!1s0x3bc2bfd8c71c0a1f:0x639a23a40334a568!8m2!3d18.5638979!4d73.7882053!16s%2Fg%2F11pw51qvvg?entry=ttu&g_ep=EgoyMDI1MDkxMC4wIKXMDSoASAFQAw%3D%3D">Directions</a>-->
+                </p>
             </div>
         </div>
 
@@ -193,7 +211,23 @@
         </div>
 
         <div class="notice" id="noticeText">
-            <b>Refund Policy  </b>: Tickets are non refundable
+            <b style="margin: 25px">Terms and Conditions</b>
+<!--            <p>T&C</p>-->
+            <ul>
+                <li>No refund/exchange once booked.</li>
+                <li>Passes are non-transferable.</li>
+                <li>Outside food & drinks not allowed.</li>
+                <li>Smoking & alcohol strictly prohibited.</li>
+                <li>Age proof required for child passes at the time of entry.</li>
+<!--                <li>Event may be cancelled/changed due to unforeseen circumstances.</li>-->
+            </ul>
+            <!--            <table>-->
+            <!--                <tr><td>T&C:</td><td>No refund/exchange once booked.</td></tr>-->
+            <!--                <tr><td></td><td>Passes are non-transferable.</td></tr>-->
+            <!--                <tr><td></td><td>Outside food & drinks not allowed.</td></tr>-->
+            <!--                <tr><td></td><td>Smoking & alcohol strictly prohibited.</td></tr>-->
+            <!--                <tr><td></td><td>Event may be cancelled/changed due to unforeseen circumstances.</td></tr>-->
+            <!--            </table>-->
         </div>
 
 <!--        <div class="actions">-->
@@ -212,51 +246,14 @@
 <!--        </div>-->
 
         <div class="price">
-            <div class="price-row"><div>Ticket price ({{quantity}})</div><div id="priceTickets">Rs.{{amount}}</div></div>
-<!--            <div class="price-row"><div>Convenience Fee</div><div id="priceConvenience">Rs.00</div></div>-->
-<!--            <div class="price-row"><div>Discount</div><div id="priceDiscount">- Rs.0.00</div></div>-->
-            <div class="total"><div>Total Amount</div><div id="priceTotal">Rs.{{amount}}</div></div>
-        </div>
+            <div class="price-row"><div>Ticket price ({{quantity}} * 499)</div><div id="priceTickets">Rs.{{amount}}</div></div>
+            <div class="price-row"><div>Convenience Fee</div><div id="priceConvenience">Rs{{convenienceFee}}</div></div>
+            <div class="price-row"><div>Discount</div><div id="priceDiscount">- Rs.{{discount}}</div></div>
+<!--            <hr class="dotted">-->
 
-        <div class="close-x" onclick="window.close && window.close();">✕</div>
+            <div class="total"><div>Total Amount</div><div id="priceTotal">Rs.{{total}}</div></div>
+        </div>
     </div>
 </div>
-
-<script>
-    // SAMPLE: replace these values dynamically from your booking data
-    const booking = {
-        poster: "poster.jpg",   // path or URL
-        qr: "qr.png",           // path or URL
-        title: "Leo (U/A)",
-        meta: "Tamil, 2D\nThu, 02 Nov | 10:30 AM\nSuchitra Prabhat Cinemas: 4K RGB | Laser Dolby Atmos",
-        holder: "SUCHITRA",
-        tickets: "2 Ticket(s)",
-        bookingId: "W94PKZ4",
-        notice: "Cancellation available : cut-off time of 4 hrs before showtime",
-        priceTickets: "Rs.360.00",
-        priceConvenience: "Rs.68.44",
-        priceDiscount: "- Rs.0.00",
-        priceTotal: "Rs.430.44"
-    };
-
-    // Apply to DOM
-    // document.getElementById('posterImg').src = booking.poster;
-    // document.getElementById('qrImg').src = booking.qr;
-    // document.getElementById('movieTitle').textContent = booking.title;
-    // document.getElementById('movieMeta').innerHTML = booking.meta.replace(/\n/g,'<br>');
-    // document.getElementById('holderName').textContent = booking.holder;
-    // document.getElementById('ticketsCount').textContent = booking.tickets;
-    // document.getElementById('bookingId').textContent = 'BOOKING ID: ' + booking.bookingId;
-    // document.getElementById('noticeText').textContent = booking.notice;
-    // document.getElementById('priceTickets').textContent = booking.priceTickets;
-    // document.getElementById('priceConvenience').textContent = booking.priceConvenience;
-    // document.getElementById('priceDiscount').textContent = booking.priceDiscount;
-    // document.getElementById('priceTotal').textContent = booking.priceTotal;
-    //
-    // // Example action handlers (hook into your app)
-    // document.getElementById('sendTickets').addEventListener('click', ()=> alert('Send to friends clicked'));
-    // document.getElementById('cancelBooking').addEventListener('click', ()=> alert('Cancel booking clicked'));
-    // document.getElementById('contactSupport').addEventListener('click', ()=> alert('Contact support clicked'));
-</script>
 </body>
 </html>

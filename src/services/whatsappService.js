@@ -27,10 +27,10 @@ function setupWhatsAppBot() {
     //     console.log("MESSAGE REVOKED ME:", message);
     // });
 
-    // client.on("message_ack", (message, ack) => {
-    //     // ack: -1 = failed, 0 = pending, 1 = sent, 2 = received, 3 = read, 4 = played
-    //     console.log("MESSAGE ACK:", message.body, ack);
-    // });
+    client.on("message_ack", (message, ack) => {
+        // ack: -1 = failed, 0 = pending, 1 = sent, 2 = received, 3 = read, 4 = played
+        console.log("MESSAGE ACK:", message.body, ack);
+    });
 
     client.on("media_uploaded", (message) => {
         console.log("MEDIA UPLOADED:", message.body);
@@ -139,13 +139,15 @@ function setupWhatsAppBot() {
                 }
 
                 data.amount = passType.price;
+                data.members = passType.members * data.quantity;
                 data.total = passType.price * data.quantity;
 
                 const booking = await createBooking(data);
                 console.log(booking)
                 const upiLink = `upi://pay?pa=${process.env.UPI_ID}&pn=${encodeURIComponent("Event Organizer")}&am=${booking.amount}&cu=INR&tn=EventPass`;
 
-                await msg.reply(`✅ Booking received for *${booking.name}*\n💰 Amount to be paid: ₹${booking.amount}\nPay here:\n${upiLink}\n Reply with *PAID* after payment. \n Hold on till we verify your payment. \n Thank You `);
+                // await msg.reply(`✅ Booking received for *${booking.name}*\n💰 Amount to be paid: ₹${booking.amount}\nPay here:\n${upiLink}\n Reply with *PAID* after payment. \n Hold on till we verify your payment. \n Thank You `);
+                await msg.reply(`✅ Booking received for *${booking.name}*\n💰 Amount to be paid: ₹${booking.total} on upi id ${process.env.UPI_ID} \n \nReply with *PAID* or share screenshot after payment. \n\nYou will receive your entry pass on payment verification \n Hold on till we verify your payment. \nThank You `);
             }
 
             else if (text === "PAID") {

@@ -51,27 +51,26 @@ async function generatePassFromHtml(booking, outputPath) {
     try {
         let html = fs.readFileSync(path.join(__dirname, "../../sample-pass.html"), "utf8");
 
-    //     const qrData = `
-    //   Name: ${booking.name}
-    //   Phone: ${booking.phone}
-    //   Units: ${booking.quantity}
-    //   Amount: ₹${booking.amount}
-    //   Booking Type: ${booking.type}
-    //   Booking ID: ${booking._id}
-    //   Issued At: ${new Date().toLocaleString()}
-    // `;
         const qrData = `${booking._id}`;
         const qrDataURL = await generateQR(qrData);
-        const logoDataUrl = imageToDataURL("./assets/images/logo.jpeg");
+        const logoDataUrl = imageToDataURL("./assets/images/profile.jpeg");
 
-        // const qrDataURL = await generateQR(booking._id);
+        const convenienceFee = 50;  //
+        const bookingCost = (booking.quantity * booking.members * 499);
+        const discount = bookingCost + convenienceFee - booking.amount;
+        const discountPercent = (bookingCost + convenienceFee) / discount;
+        console.log("Discount", discountPercent + "%");
+        const total = bookingCost - discount;
 
         html = html
             .replaceAll("{{name}}", booking.name)
             .replaceAll("{{phone}}", booking.phone)
             .replaceAll("{{email}}", booking.email)
-            .replaceAll("{{amount}}", booking.amount)
-            .replaceAll("{{quantity}}", booking.quantity)
+            .replaceAll("{{amount}}", bookingCost)  // 1996
+            .replaceAll("{{convenienceFee}}", convenienceFee) //50
+            .replaceAll("{{discount}}", discount) // 348
+            .replaceAll("{{total}}", total)
+            .replaceAll("{{quantity}}", (booking.quantity * booking.members))
             .replaceAll("{{bookingId}}", booking._id)
             .replaceAll("{{issuedAt}}", new Date().toLocaleString())
             .replaceAll("{{logoData}}", logoDataUrl)
