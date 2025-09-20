@@ -45,5 +45,11 @@ router.get('/:id', auth, async (req, res) => {
     res.json(plan);
 });
 
+router.get('/', auth, async (req, res) => {
+    const plan = await Plan.find({active:true});
+    if (!plan) return res.status(404).json({ message: 'Plan not found' });
+    res.json(plan);
+});
+
 module.exports = router;
 

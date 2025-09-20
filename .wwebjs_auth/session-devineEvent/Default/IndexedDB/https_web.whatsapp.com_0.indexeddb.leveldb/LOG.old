@@ -1,0 +1,14 @@
+2025/09/20-09:51:55.864 6282a Reusing MANIFEST /home/user/NeoSoft/whatsapp_booking_bot/.wwebjs_auth/session-devineEvent/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2025/09/20-09:51:55.871 6282a Recovering log #1530
+2025/09/20-09:51:57.185 6282a Reusing old log /home/user/NeoSoft/whatsapp_booking_bot/.wwebjs_auth/session-devineEvent/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/001530.log 
+2025/09/20-09:52:12.595 62825 Level-0 table #1546: started
+2025/09/20-09:52:12.856 62825 Level-0 table #1546: 534363 bytes OK
+2025/09/20-09:52:12.878 62825 Delete type=0 #1530
+2025/09/20-09:52:12.888 62825 Manual compaction at level-0 from '\x00Y\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00Z\x00\x00\x00' @ 0 : 0; will stop at '\x00Y\x00\x00\x05' @ 4969821 : 1
+2025/09/20-09:52:12.888 62825 Compacting 1@0 + 1@1 files
+2025/09/20-09:52:13.273 62825 Generated table #1547@0: 12103 keys, 285777 bytes
+2025/09/20-09:52:13.301 62825 Generated table #1548@0: 656 keys, 15238 bytes
+2025/09/20-09:52:13.301 62825 Compacted 1@0 + 1@1 files => 301015 bytes
+2025/09/20-09:52:13.308 62825 compacted to: files[ 0 2 18 0 0 0 0 ]
+2025/09/20-09:52:13.317 62825 Delete type=2 #1546
+2025/09/20-09:52:13.321 62825 Manual compaction at level-0 from '\x00Y\x00\x00\x05' @ 4969821 : 1 .. '\x00Z\x00\x00\x00' @ 0 : 0; will stop at (end)
