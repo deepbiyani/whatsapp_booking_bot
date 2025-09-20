@@ -20,7 +20,7 @@ async function getLatestBooking(phone) {
 }
 
 async function getPendingPasses() {
-    return await Booking.find({ paid: true, passSent: false });
+    return await Booking.find({ paid: true, passSent: false }).populate("passes.plan");
 }
 
 module.exports = { createBooking, markAsPaid, getLatestBooking, getPendingPasses };

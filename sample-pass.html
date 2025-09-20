@@ -200,7 +200,8 @@
         </div>
 
         <div class="qr-section">
-            <div class="tickets-count" id="ticketsCount">{{quantity}} Ticket(s)</div>
+<!--            <div class="tickets-count" id="ticketsCount">{{quantity}} Ticket(s)</div>-->
+            <div class="tickets-count" id="ticketsCount">Ticket(s): {{plan}} ({{quantity}})</div>
             <div class="holder-name" id="holderName">{{name}}</div>
 
             <div class="qr">
@@ -246,9 +247,9 @@
 <!--        </div>-->
 
         <div class="price">
-            <div class="price-row"><div>Ticket price ({{quantity}} * 499)</div><div id="priceTickets">Rs.{{amount}}</div></div>
-            <div class="price-row"><div>Convenience Fee</div><div id="priceConvenience">Rs{{convenienceFee}}</div></div>
-            <div class="price-row"><div>Discount</div><div id="priceDiscount">- Rs.{{discount}}</div></div>
+            <div class="price-row"><div>Ticket price ({{quantity}} * {{unitPrice}})</div><div id="priceTickets">Rs.{{amount}}</div></div>
+<!--            <div class="price-row"><div>Convenience Fee</div><div id="priceConvenience">Rs{{convenienceFee}}</div></div>-->
+            <div class="price-row"><div>Discount {{discountType}}</div><div id="priceDiscount">- Rs.{{discount}}</div></div>
 <!--            <hr class="dotted">-->
 
             <div class="total"><div>Total Amount</div><div id="priceTotal">Rs.{{total}}</div></div>

@@ -55,26 +55,53 @@ async function generatePassFromHtml(booking, outputPath) {
         const qrDataURL = await generateQR(qrData);
         const logoDataUrl = imageToDataURL("./assets/images/profile.jpeg");
 
-        const convenienceFee = 50;  //
-        const bookingCost = (booking.quantity * booking.members * 499);
-        const discount = bookingCost + convenienceFee - booking.amount;
-        const discountPercent = (bookingCost + convenienceFee) / discount;
-        console.log("Discount", discountPercent + "%");
-        const total = bookingCost - discount;
+        let passData = {};
+        if (booking && booking.passes.length > 0) {
 
-        html = html
-            .replaceAll("{{name}}", booking.name)
-            .replaceAll("{{phone}}", booking.phone)
-            .replaceAll("{{email}}", booking.email)
-            .replaceAll("{{amount}}", bookingCost)  // 1996
-            .replaceAll("{{convenienceFee}}", convenienceFee) //50
-            .replaceAll("{{discount}}", discount) // 348
-            .replaceAll("{{total}}", total)
-            .replaceAll("{{quantity}}", (booking.quantity * booking.members))
-            .replaceAll("{{bookingId}}", booking._id)
-            .replaceAll("{{issuedAt}}", new Date().toLocaleString())
-            .replaceAll("{{logoData}}", logoDataUrl)
-            .replaceAll("{{qrData}}", qrDataURL);
+            booking.passes.forEach((pass) => {
+                if (pass.plan && pass.plan.discountHistory && pass.planDiscountId) {
+                    pass.appliedDiscout = pass.plan.discountHistory.filter(
+                        d => d._id.toString() === pass.planDiscountId.toString()
+                    )[0];
+                }
+
+                const discount = (pass.planDiscountAmount + pass.promoDiscountAmount) * pass.quantity;
+                const discountType = pass.appliedDiscout?.note ?? '';
+                const convenienceFee = 50;  //
+                const bookingCost = (pass.quantity * pass.unitPrice);
+                const totalAfterDiscount = pass.totalAmount;
+
+                console.log(pass)
+
+                console.log("Plan:", pass.plan.title);
+                console.log("Quantity:", pass.quantity);
+                console.log("Unit Price:", pass.unitPrice);
+                console.log("bookingCost:", bookingCost);
+                console.log("Discount:", discount);
+                console.log("Applied Discount:", pass.appliedDiscout);
+                console.log("Discount type:", discountType);
+                console.log("Total After Discount:", totalAfterDiscount);
+                console.log("------");
+                passData = pass;
+
+                html = html
+                    .replaceAll("{{plan}}", passData.plan.title)
+                    .replaceAll("{{name}}", booking.name)
+                    .replaceAll("{{phone}}", booking.phone)
+                    .replaceAll("{{email}}", booking.email)
+                    .replaceAll("{{amount}}", bookingCost)  // 1996
+                    // .replaceAll("{{convenienceFee}}", convenienceFee) //50
+                    .replaceAll("{{discount}}", discount) // 348
+                    .replaceAll("{{discountType}}", discountType) // 348
+                    .replaceAll("{{total}}", totalAfterDiscount)
+                    .replaceAll("{{quantity}}", (passData.quantity))
+                    .replaceAll("{{unitPrice}}", (passData.unitPrice))
+                    .replaceAll("{{bookingId}}", booking._id)
+                    .replaceAll("{{issuedAt}}", new Date().toLocaleString())
+                    .replaceAll("{{logoData}}", logoDataUrl)
+                    .replaceAll("{{qrData}}", qrDataURL);
+            });
+        }
 
         const browser = await puppeteer.launch({ headless: true });
         const page = await browser.newPage();
@@ -113,5 +140,13 @@ function imageToDataURL(imagePath) {
   return `data:image/${ext};base64,${base64}`;
 }
 
+const formatDiscountType = (value) => {
+    if (!value) return '';
+    // Convert snake_case to Title Case
+    return `(${value
+        .split('_')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ')})`;
+};
 
 module.exports = { generatePassPDF, generatePassFromHtml };
