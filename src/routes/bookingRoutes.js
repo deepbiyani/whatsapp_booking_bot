@@ -108,24 +108,16 @@ router.post('/', auth, async (req, res) => {
 });
 
 // Get bookings (filter by user or phone)
-router.get('/', auth, async (req, res) => {
-    const { phone, userId, status } = req.query;
-    const q = {};
-    if (phone) q.phone = phone;
-    if (userId) q.user = userId;
-    if (status) q.status = status;
-    const bookings = await Booking.find(q).populate('passes.plan').populate('promoCode');
-    res.json(bookings);
-});
-
-// Get single booking
-// router.get('/:id', auth, async (req, res) => {
-//     const id = req.params.id;
-//     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({ message: 'Invalid id' });
-//     const booking = await Booking.findById(id).populate('passes.plan').populate('promoCode');
-//     if (!booking) return res.status(404).json({ message: 'Booking not found' });
-//     res.json(booking);
+// router.get('/', auth, async (req, res) => {
+//     const { phone, userId, status } = req.query;
+//     const q = {};
+//     if (phone) q.phone = phone;
+//     if (userId) q.user = userId;
+//     if (status) q.status = status;
+//     const bookings = await Booking.find(q).populate('passes.plan').populate('promoCode');
+//     res.json(bookings);
 // });
+
 
 // Update booking (partial updates, e.g. change customer info)
 router.patch('/:id', auth, async (req, res) => {
