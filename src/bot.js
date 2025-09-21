@@ -75,7 +75,7 @@ let qrCodeData = null; // store latest QR
     <html>
       <body style="text-align:center;">
         <h2>Scan this QR with WhatsApp</h2>
-        <img src="${qrCodeData}" />
+        <img width="600" height="600" src="${qrCodeData}" />
       </body>
     </html>
   `);
@@ -166,7 +166,7 @@ function setupWhatsAppBot() {
 
     client.on("qr", async (qr) => {
         try {
-            console.log("QR generated, available at /qr and /qr/download");
+            console.log("QR generated");
             qrCodeData = await qrcode.toDataURL(qr); // save as base64 DataURL
         } catch (err) {
             console.error('Error generating QR image:', err);
