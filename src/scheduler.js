@@ -6,6 +6,7 @@ const fs = require("fs");
 const logger = require("./utils/logger");
 const {getPaymentLink} = require("./services/paymentService");
 const PaymentTransactions = require("./models/PaymentTransactions");
+const Booking = require("./models/Booking");
 
 function startScheduler(client) {
     setInterval(async () => {
@@ -41,22 +42,27 @@ function startScheduler(client) {
             for (const failedBooking of paymentFailedBooking) {
                 const txnid = "txn" + Date.now();
 
-                const paymentData = { amount: failedBooking.amountAfterDiscounts, productinfo : "Pass", firstname : failedBooking.name, email: failedBooking.email, failedBooking:data.phone, txnid, bookingId: failedBooking._id};
+                console.log(txnid)
+                const paymentData = { amount: failedBooking.amountAfterDiscounts, productinfo : "Pass", firstname : failedBooking.name, email: failedBooking.email, failedBooking:failedBooking.phone, txnid, bookingId: failedBooking._id};
                 const paymentLink = await getPaymentLink(paymentData);
 
-                const PaymentTransaction = new PaymentTransactions(paymentData);
-                await PaymentTransaction.save();
+                // const PaymentTransaction = new PaymentTransactions(paymentData);
+                // await PaymentTransaction.save();
 
                 const number = `91${failedBooking.phone}@c.us`
                 let message = `Dear *${failedBooking.name}*\nYour last payment transaction was failed \n💰 Amount to be paid: ₹${failedBooking.amountAfterDiscounts}\nPay on below link : \n${paymentLink}\n\n Hold on till we verify your payment. \nThank You `;
                 await client.sendMessage(number, message);
+
+                const booking = await Booking.findOne({ '_id': failedBooking._id }).sort({ createdAt: -1 });
+                booking.paymentStatus = 'PENDING';
+                await booking.save();
             }
 
 
             } catch (err) {
             logger.error("❌ Scheduler error: " + err);
         }
-    }, 60 * 1000);
+    }, 30 * 1000);
 }
 
 module.exports = { startScheduler };

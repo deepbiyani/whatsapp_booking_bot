@@ -97,13 +97,15 @@ router.post("/payment-success", async (req, res) => {
 
         txn.status = "SUCCESS"
         txn.save()
+
+        res.send("<h2>Payment Success ✅ </h2>");
+
     }
 });
 
 // Failure callback
 router.post("/payment-failure", async (req, res) => {
     console.log("Payment Failed:", req.body);
-    res.send("<h2>Payment Failed ❌</h2>");
     const response = req.body;
     if (response.status == 'failure') {
         let txnid = response.txnid;
@@ -117,6 +119,7 @@ router.post("/payment-failure", async (req, res) => {
         txn.status = "FAILED"
         txn.save()
     }
+    res.send("<h2>Payment Failed ❌</h2>");
 });
 
 module.exports = router;

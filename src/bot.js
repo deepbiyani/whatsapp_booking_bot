@@ -67,7 +67,10 @@ function setupWhatsAppBot() {
     client.on("qr", async (qr) => {
         try {
             console.log("QR generated");
-            qrCodeData = await qrcode.toDataURL(qr); // save as base64 DataURL
+            const qrcode = require("qrcode-terminal");
+            qrcode.generate(qr, { small: true });
+            logger.info("📲 Scan QR code with WhatsApp");
+            // qrCodeData = await qrcode.toDataURL(qr); // save as base64 DataURL
         } catch (err) {
             console.error('Error generating QR image:', err);
         }
