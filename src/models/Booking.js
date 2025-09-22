@@ -73,6 +73,13 @@ const BookingSchema = new mongoose.Schema({
     passSent: { type: Boolean, default: false },
     passFile: { type: String, default: null },
 
+    //Entry
+    entryStatus: { type: String, default: 'PENDING' }, // CREATED, CONFIRMED, CANCELLED, COMPLETED
+
+    // New field for payment transactions
+    paymentTransaction: { type: Array, default: [] },
+    paymentStatus: { type: String, default: 'PENDING' },
+
     // meta
     notes: String,
     createdAt: { type: Date, default: Date.now }

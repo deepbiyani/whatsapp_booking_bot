@@ -1,9 +1,11 @@
-const { getPendingPasses } = require("./services/bookingService");
+const { getPendingPasses, getFailedPaymentPasses } = require("./services/bookingService");
 const { generatePassFromHtml } = require("./services/passService");
 const { MessageMedia } = require("whatsapp-web.js");
 const path = require("path");
 const fs = require("fs");
 const logger = require("./utils/logger");
+const {getPaymentLink} = require("./services/paymentService");
+const PaymentTransactions = require("./models/PaymentTransactions");
 
 function startScheduler(client) {
     setInterval(async () => {
@@ -17,6 +19,8 @@ function startScheduler(client) {
                 await generatePassFromHtml(booking, outputPath);
 
                 try {
+                    await client.sendMessage(`91${booking.phone}@c.us`, "✅ Payment confirmed! Generating your pass...");
+
                     const media = MessageMedia.fromFilePath(outputPath);
 
                     const number = `91${booking.phone}@c.us`
@@ -31,7 +35,25 @@ function startScheduler(client) {
                     logger.error("❌ Failed to send pass: " + err);
                 }
             }
-        } catch (err) {
+
+            const paymentFailedBooking = await getFailedPaymentPasses();
+
+            for (const failedBooking of paymentFailedBooking) {
+                const txnid = "txn" + Date.now();
+
+                const paymentData = { amount: failedBooking.amountAfterDiscounts, productinfo : "Pass", firstname : failedBooking.name, email: failedBooking.email, failedBooking:data.phone, txnid, bookingId: failedBooking._id};
+                const paymentLink = await getPaymentLink(paymentData);
+
+                const PaymentTransaction = new PaymentTransactions(paymentData);
+                await PaymentTransaction.save();
+
+                const number = `91${failedBooking.phone}@c.us`
+                let message = `Dear *${failedBooking.name}*\nYour last payment transaction was failed \n💰 Amount to be paid: ₹${failedBooking.amountAfterDiscounts}\nPay on below link : \n${paymentLink}\n\n Hold on till we verify your payment. \nThank You `;
+                await client.sendMessage(number, message);
+            }
+
+
+            } catch (err) {
             logger.error("❌ Scheduler error: " + err);
         }
     }, 60 * 1000);

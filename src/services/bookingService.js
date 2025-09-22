@@ -23,4 +23,8 @@ async function getPendingPasses() {
     return await Booking.find({ paid: true, passSent: false }).populate("passes.plan");
 }
 
-module.exports = { createBooking, markAsPaid, getLatestBooking, getPendingPasses };
+async function getFailedPaymentPasses() {
+    return await Booking.find({ paymentStatus: 'FAILED'}).populate("passes.plan");
+}
+
+module.exports = { createBooking, markAsPaid, getLatestBooking, getPendingPasses, getFailedPaymentPasses };

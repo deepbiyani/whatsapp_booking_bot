@@ -1,24 +1,26 @@
 require("dotenv").config();
 const connectDB = require("./config/db");
-// const { setupWhatsAppBot } = require("./services/whatsappService");
 const { startScheduler } = require("./scheduler");
 const cors = require("cors");
 const express = require("express");
+const { Client, LocalAuth, MessageMedia } = require("whatsapp-web.js");
+const path = require("path");
+const qrcode = require('qrcode');
+
 const bodyParser = require('body-parser');
 const bookingRoutes = require("./routes/bookingRoutes");
 const passRoutes = require("./routes/PassTypeRoutes");
 const wsappRoutes = require("./routes/whatsappRoutes");
-const { Client, LocalAuth, MessageMedia } = require("whatsapp-web.js");
-// const qrcode = require("qrcode-terminal");
-const path = require("path");
+const paymentRoutes = require("./routes/paymentRoutes");
+
 const { generatePassFromHtml } = require("./services/passService");
+const { getPaymentLink } = require("./services/paymentService");
 const logger = require("./utils/logger");
+
 const Booking = require("./models/Booking");
-const PassType = require("./models/PassType");
 const Plan = require("./models/Plan");
+
 const { createBooking } = require("./controllers/bookingController");
-const qrcode = require('qrcode');
-const fs = require('fs');
 
 const app = express();
 app.use(express.json());
@@ -39,48 +41,11 @@ let qrCodeData = null; // store latest QR
     app.use("/api/whatsapp", wsappRoutes);
     app.use('/api/plans', require('./routes/PassTypeRoutes'));
     app.use('/api/promo', require('./routes/promo'));
+    app.use('/api/payment', paymentRoutes);
 
     // Start server
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-    // Simple auth routes for testing
-    const jwt = require('jsonwebtoken');
-    const User = require('./models/User');
-
-    app.post('/api/auth/register', async (req,res) => {
-        console.log(req.body);
-        const u = new User(req.body);
-        await u.save();
-        res.json(u);
-    });
-
-    app.post('/api/auth/login', async (req,res) => {
-        // Minimal login: find user by email OR phone and return a JWT
-        const { email, phone } = req.body;
-        const user = await User.findOne(email ? { email } : { phone });
-        if (!user) return res.status(401).json({ message: 'Invalid credentials' });
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'change_me_to_env_secret', { expiresIn: '7d' });
-        res.json({ token, user });
-    });
-
-
-// API: View QR in browser
-    app.get("/api/qr", (req, res) => {
-        if (!qrCodeData) {
-            return res.send("QR not generated yet. Please wait...");
-        }
-        // Simple HTML page to show QR
-        res.send(`
-    <html>
-      <body style="text-align:center;">
-        <h2>Scan this QR with WhatsApp</h2>
-        <img width="600" height="600" src="${qrCodeData}" />
-      </body>
-    </html>
-  `);
-    });
-
 
 })();
 
@@ -98,71 +63,6 @@ function setupWhatsAppBot() {
         console.log("Message Sent to:", message.to);
     });
 
-    // client.on("message_revoke_everyone", (message, revokedMsg) => {
-    //     console.log("MESSAGE REVOKED EVERYONE:", message, revokedMsg);
-    // });
-
-    // client.on("message_revoke_me", (message) => {
-    //     console.log("MESSAGE REVOKED ME:", message);
-    // });
-
-    client.on("message_ack", (message, ack) => {
-        // ack: -1 = failed, 0 = pending, 1 = sent, 2 = received, 3 = read, 4 = played
-        console.log("MESSAGE ACK:", message.body, ack);
-    });
-
-    client.on("media_uploaded", (message) => {
-        console.log("MEDIA UPLOADED:", message.body);
-    });
-
-    // client.on("group_join", (notification) => {
-    //     console.log("GROUP JOIN:", notification);
-    // });
-    //
-    // client.on("group_leave", (notification) => {
-    //     console.log("GROUP LEAVE:", notification);
-    // });
-    //
-    // client.on("group_update", (notification) => {
-    //     console.log("GROUP UPDATE:", notification);
-    // });
-    //
-    // client.on("change_state", (state) => {
-    //     console.log("CHANGE STATE:", state);
-    // });
-
-    client.on("change_battery", (batteryInfo) => {
-        console.log("BATTERY INFO:", batteryInfo); // { battery: % , plugged: boolean }
-    });
-
-    client.on("presence_update", (update) => {
-        console.log("PRESENCE UPDATE:", update);
-    });
-
-    client.on("call", (call) => {
-        console.log("CALL RECEIVED:", call);
-        // Example: auto reject
-        // call.reject();
-    });
-
-    /**
-     * 🔹 Contact & chat updates
-     */
-    // client.on("contact_changed", (message, oldId, newId, isContact) => {
-    //     console.log("CONTACT CHANGED:", { message, oldId, newId, isContact });
-    // });
-
-    client.on("chat_removed", (chat) => {
-        console.log("CHAT REMOVED:", chat);
-    });
-
-    client.on("chat_archived", (chat, currState, prevState) => {
-        console.log("CHAT ARCHIVED:", chat, currState, prevState);
-    });
-
-    client.on("chat_unread", (chat) => {
-        console.log("CHAT UNREAD:", chat);
-    });
 
     client.on("qr", async (qr) => {
         try {
@@ -171,8 +71,6 @@ function setupWhatsAppBot() {
         } catch (err) {
             console.error('Error generating QR image:', err);
         }
-        //     qrcode.generate(qr, { small: true });
-        // logger.info("📲 Scan QR code with WhatsApp");
     });
 
     client.on("ready", () => {
@@ -254,8 +152,10 @@ function setupWhatsAppBot() {
                     user: '68cbcdae5e99fe27b114d8fe'
                 };
 
+                const txnid = "txn" + Date.now();
+
                 const newBooking = await createBooking(data);
-                console.log(newBooking)
+                // console.log(newBooking)
                 const totalAfterDiscount = newBooking.passes.reduce((sum, pass) => {
                     const amountAfterDiscount =
                         pass.quantity * pass.unitPrice -
@@ -263,8 +163,12 @@ function setupWhatsAppBot() {
                     return sum + amountAfterDiscount;
                 }, 0);
 
+                const paymentData = { amount: newBooking.amountAfterDiscounts, productinfo : newBooking.type + " Pass", firstname : data.name, email: data.email, phone:data.phone, txnid, bookingId: newBooking._id};
+                const paymentLink = await getPaymentLink(paymentData);
+                console.log(paymentLink)
                 // const upiLink = `upi://pay?pa=${process.env.UPI_ID}&pn=${encodeURIComponent("Event Organizer")}&am=${booking.amount}&cu=INR&tn=EventPass`;
-                await msg.reply(`✅ Booking received for *${newBooking.name}*\n💰 Amount to be paid: ₹${newBooking.amountAfterDiscounts}\nPay on below upi id : \n${process.env.UPI_ID} (Kirtikumar M Sanchela)\n\nReply with *PAID* after payment. \n\nHold on till we verify your payment. \nThank You `);
+                // await msg.reply(`✅ Booking received for *${newBooking.name}*\n💰 Amount to be paid: ₹${newBooking.amountAfterDiscounts}\nPay on below upi id : \n${process.env.UPI_ID} (Kirtikumar M Sanchela)\n\nReply with *PAID* after payment. \n\nHold on till we verify your payment. \nThank You `);
+                await msg.reply(`✅ Booking received for *${newBooking.name}*\n💰 Amount to be paid: ₹${newBooking.amountAfterDiscounts}\nPay on below link : \n${paymentLink}\n\nReply with *PAID* after payment. \n\nHold on till we verify your payment. \nThank You `);
 
             }
 

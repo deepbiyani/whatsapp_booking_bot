@@ -43,7 +43,7 @@ router.post('/', auth, async (req, res) => {
         console.log(p.planId)
 
         const plan = await Plan.findById(p.planId);
-        if (!plan) return res.status(400).json({ message: `Plan ${p.planId} not found` });
+        if (!plan) return res.status(400).json({ status: false, message: `Plan ${p.planId} not found` });
 
         const discount = getActivePlanDiscount(plan, bookingDate);
         const unitPrice = plan.basePrice;
@@ -107,24 +107,13 @@ router.post('/', auth, async (req, res) => {
     res.json(booking);
 });
 
-// Get bookings (filter by user or phone)
-// router.get('/', auth, async (req, res) => {
-//     const { phone, userId, status } = req.query;
-//     const q = {};
-//     if (phone) q.phone = phone;
-//     if (userId) q.user = userId;
-//     if (status) q.status = status;
-//     const bookings = await Booking.find(q).populate('passes.plan').populate('promoCode');
-//     res.json(bookings);
-// });
-
 
 // Update booking (partial updates, e.g. change customer info)
 router.patch('/:id', auth, async (req, res) => {
     const id = req.params.id;
     const update = req.body;
     const booking = await Booking.findById(id);
-    if (!booking) return res.status(404).json({ message: 'Booking not found' });
+    if (!booking) return res.status(404).json({ status: false, message: 'Booking not found' });
 
     // Allow changing basic fields. Not allowing direct pass edits here for simplicity.
     ['name','email','phone','whatsapp','notes'].forEach(k => {
@@ -132,39 +121,44 @@ router.patch('/:id', auth, async (req, res) => {
     });
 
     await booking.save();
-    res.json(booking);
+    res.json({success: true, message: "Booking updated successfully", data: booking});
 });
 
 // Get passes for a booking
 router.get('/:id/passes', auth, async (req, res) => {
     const booking = await Booking.findById(req.params.id).populate('passes.plan');
-    if (!booking) return res.status(404).json({ message: 'Booking not found' });
-    res.json(booking.passes);
+    if (!booking) return res.status(404).json({ status: false, message: 'Booking not found' });
+    res.json({
+        success: true,
+        message: "Passes fetched successfully",
+        data: booking.passes
+    });
 });
 
 // Change booking status (tracks history)
 router.post('/:id/status', auth, async (req, res) => {
     const { to, reason } = req.body;
     const booking = await Booking.findById(req.params.id);
-    if (!booking) return res.status(404).json({ message: 'Booking not found' });
+    if (!booking) return res.status(404).json({ status: false, message: 'Booking not found' });
     const from = booking.status;
     booking.status = to;
     booking.statusHistory.push({ from, to, reason, changedBy: req.user._id, at: new Date() });
     await booking.save();
-    res.json(booking);
+    res.json({success: true, message: "Booking Status changed", data: booking.passes});
 });
 
 // Change pass item status
 router.post('/:id/passes/:passId/status', auth, async (req, res) => {
     const { to, reason } = req.body;
     const booking = await Booking.findById(req.params.id);
-    if (!booking) return res.status(404).json({ message: 'Booking not found' });
+    if (!booking) return res.status(404).json({ status: false, message: 'Booking not found' });
     const pass = booking.passes.id(req.params.passId);
-    if (!pass) return res.status(404).json({ message: 'Pass not found' });
+    if (!pass) return res.status(404).json({ status: false, message: 'Pass not found' });
     const from = pass.status;
     pass.status = to;
     pass.statusHistory.push({ from, to, reason, changedBy: req.user._id, at: new Date() });
     await booking.save();
+    res.json({success: true, message: "Booking Status changed", data: booking.passes});
     res.json(pass);
 });
 
@@ -176,7 +170,7 @@ router.post('/:id/payments', auth, async (req, res) => {
     const booking = await Booking.findById(req.params.id);
 
     if (!isNaN(safeAmount)) {
-        if (!booking) return res.status(404).json({ message: 'Booking not found' });
+        if (!booking) return res.status(404).json({ status: false, message: 'Booking not found' });
         booking.payments.push({ amount: safeAmount, method, paidAt: paidAt ? new Date(paidAt) : new Date(), proofUrl, txnId });
         booking.totalPaid = (parseFloat(booking.totalPaid || 0)) + safeAmount;
         booking.paid = parseFloat(booking.totalPaid) >= parseFloat(booking.amountAfterDiscounts);
@@ -184,10 +178,8 @@ router.post('/:id/payments', auth, async (req, res) => {
     } else {
         console.warn("Invalid amount value:", amount);
     }
-    res.json(booking);
+    res.json({success: true, message: "Payment updated of amount" + amount, data: booking});
 });
-
-module.exports = router;
 
 // Get all bookings
 router.get("/", async (req, res) => {
@@ -229,6 +221,7 @@ router.get("/register-entry/:id", async (req, res) => {
         booking.entryTime = new Date(); // Current timestamp
         booking.entryStatus = "Entered"; // Mark as entered
 
+        console.log(booking)
         await booking.save();
 
         res.json({
