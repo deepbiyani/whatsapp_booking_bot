@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Booking = require("../models/Booking");
-const {generatePassFromHtml} = require("../services/passService");
+const {generatePassFromHtml, clearUnusedFiles} = require("../services/passService");
 const fs = require("fs");
 const path = require("path");
 
@@ -315,6 +315,8 @@ router.get("/pass/:id", async (req, res) => {
         res.status(500).json({ success: false, message: "Error generating pass", error: error.message });
     }
 });
+
+router.delete("/cleanup/files", clearUnusedFiles);
 
 
 module.exports = router;

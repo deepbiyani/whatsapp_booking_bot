@@ -4,6 +4,10 @@ const PDFDocument = require("pdfkit");
 const puppeteer = require("puppeteer");
 const { generateQR } = require("../utils/qrGenerator");
 const logger = require("../utils/logger");
+const Booking = require("../models/Booking"); // adjust path
+
+// folder where passes are stored
+const PASSES_DIR = path.join(process.cwd(), "passes");
 
 async function generatePassPDF(booking, outputPath) {
     try {
@@ -149,4 +153,41 @@ const formatDiscountType = (value) => {
         .join(' ')})`;
 };
 
-module.exports = { generatePassPDF, generatePassFromHtml };
+const clearUnusedFiles = async (req, res) => {
+    try {
+        // 1. Get all booking IDs from DB
+        const bookings = await Booking.find({}, "_id").lean();
+        const bookingIds = bookings.map(b => String(b._id));
+
+        // 2. Read files from passes folder
+        const files = fs.readdirSync(PASSES_DIR);
+
+        let deletedFiles = [];
+        let keptFiles = [];
+
+        for (const file of files) {
+            const fileId = file.split("_")[0]; // assuming `<bookingId>_pass.pdf`
+
+            if (!bookingIds.includes(fileId)) {
+                // file is not linked to any booking → delete
+                fs.unlinkSync(path.join(PASSES_DIR, file));
+                deletedFiles.push(file);
+            } else {
+                keptFiles.push(file);
+            }
+        }
+
+        return res.json({
+            success: true,
+            message: "Cleanup complete",
+            deleted: deletedFiles,
+            kept: keptFiles,
+        });
+    } catch (err) {
+        console.error("Error cleaning files:", err);
+        return res.status(500).json({ success: false, error: err.message });
+    }
+};
+
+
+module.exports = { generatePassPDF, generatePassFromHtml, clearUnusedFiles };
