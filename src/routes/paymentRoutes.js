@@ -97,8 +97,11 @@ router.post("/payment-success", async (req, res) => {
 
         txn.status = "SUCCESS"
         txn.save()
-
-        res.send("<h2>Payment Success ✅ </h2>");
+        res.send(`
+          <h2>Payment Success ✅</h2>
+          <a href='${process.env.BACKEND_BASE_URL}/api/bookings/pass/${booking._id}'>Download Your Pass</a>
+        `);
+        // res.send("<h2>Payment Success ✅ </h2>");
 
     }
 });
