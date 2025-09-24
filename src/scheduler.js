@@ -63,6 +63,20 @@ function startScheduler(client) {
             logger.error("❌ Scheduler error: " + err);
         }
     }, 30 * 1000);
+    if (process.env.ENV == "PROD") {
+
+        setInterval(async () => {
+            const API_URL = "https://whatsapp-booking-bot-by57.onrender.com/api/payment/pay/txn_test";
+
+            try {
+                const res = await fetch(API_URL);
+                const data = await res.json();
+                console.log("API response:", data);
+            } catch (err) {
+                console.error("Error calling API:", err.message);
+            }
+        }, 10 * 60 * 999);
+    }
 }
 
 module.exports = { startScheduler };
